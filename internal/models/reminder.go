@@ -1,13 +1,14 @@
 package models
 
 import (
-	"encoding/json"
+	"fmt"
 	"time"
 )
 
 type Reminder struct {
 	ID        int64     `json:"id,omitempty"`
-	Content   string    `json:"content"`
+	UserID    int64     `json:"user_id"`
+	Name      string    `json:"name"`
 	Completed bool      `json:"completed"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
@@ -16,28 +17,14 @@ type Reminder struct {
 	Deadline time.Time `json:"deadline"`
 
 	// RemindFrequency is a string that represents the frequency of the reminder.
-	RemindFrequency time.Duration `json:"remind_frequency"`
+	RemindFrequency Frequency `json:"remind_frequency"`
 }
 
 func (r *Reminder) ToString() string {
-	s, _ := SerializeReminder(r)
-	return s
-}
-
-func DeserializeReminder(data string) (*Reminder, error) {
-	var reminder Reminder
-	if err := json.Unmarshal([]byte(data), &reminder); err != nil {
-		return nil, err
-	}
-
-	return &reminder, nil
-}
-
-func SerializeReminder(reminder *Reminder) (string, error) {
-	data, err := json.Marshal(reminder)
-	if err != nil {
-		return "", err
-	}
-
-	return string(data), nil
+	return fmt.Sprintf(
+		"Name: %s\nDeadline: %s\nFrequency: %s\n",
+		r.Name,
+		r.Deadline.Format("2006-01-02 15:04"),
+		r.RemindFrequency,
+	)
 }
