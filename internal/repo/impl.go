@@ -11,3 +11,8 @@ type IReminderRepo interface {
 	DeleteReminder(id int64) error
 	UpdateReminder(rem *dto.Reminder) error
 }
+
+type IReminderRepoCron interface {
+	GetRemindersToRun() ([]*models.Reminder, error)
+	ChangeUpdatedAtMultiple(ids []int64) error
+}

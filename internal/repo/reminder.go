@@ -87,7 +87,7 @@ func (r *ReminderRepo) UpdateReminder(rem *dto.Reminder) error {
 	q := `UPDATE reminders
 		  SET name = $1, frequency = $2, deadline = $3, updated_at = $4
 		  WHERE id = $5`
-	if _, err = tx.Exec(q, rem.Name, rem.RemindFrequency, rem.Deadline, rem.ID, time.Now()); err != nil {
+	if _, err = tx.Exec(q, rem.Name, rem.RemindFrequency, rem.Deadline, rem.ID, time.Now().UTC()); err != nil {
 		return err
 	}
 

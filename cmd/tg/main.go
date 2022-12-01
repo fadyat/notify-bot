@@ -2,7 +2,7 @@ package main
 
 import (
 	"deadlines/internal/repo"
-	"deadlines/internal/tg"
+	"deadlines/internal/services"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -22,7 +22,14 @@ func main() {
 		panic(err)
 	}
 
-	tgService := tg.NewReminderBot(bot, psql)
+	cronPsql, err := initCron("postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable")
+	if err != nil {
+		panic(err)
+	}
+
+	tgService := services.NewReminderBot(bot, psql)
+	cronService := services.NewReminderCron(bot, cronPsql)
+	cronService.Start()
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
 	updateConfig := tgbotapi.NewUpdate(0)
@@ -41,4 +48,13 @@ func initRepo(addr string) (repo.IReminderRepo, error) {
 	}
 
 	return repo.NewReminderRepo(psql), nil
+}
+
+func initCron(addr string) (repo.IReminderRepoCron, error) {
+	psql, err := sqlx.Connect("postgres", addr)
+	if err != nil {
+		return nil, err
+	}
+
+	return repo.NewReminderRepoCron(psql), nil
 }

@@ -1,4 +1,4 @@
-create type frequency_type as enum ('once', 'daily', 'weekly', 'monthly');
+create type frequency_type as enum ('once', 'daily', 'weekly', 'monthly', 'never');
 create sequence reminders_id_seq;
 
 create table reminders

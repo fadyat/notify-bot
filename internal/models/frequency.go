@@ -7,6 +7,7 @@ const (
 	Daily   Frequency = "daily"
 	Weekly  Frequency = "weekly"
 	Monthly Frequency = "monthly"
+	Never   Frequency = "never"
 )
 
 func ValidFrequency(f Frequency) bool {

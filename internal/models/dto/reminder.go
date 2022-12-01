@@ -32,7 +32,7 @@ func ReminderFromTgArgs(args string, userID int64) (*Reminder, error) {
 		return &Reminder{}, models.ErrInvalidArgs
 	}
 
-	curTime := time.Now()
+	curTime := time.Now().UTC()
 	name, deadlineDate, frequency := parsed[0], curTime.AddDate(0, 0, 1), models.Once
 	if name[0] == '"' && name[len(name)-1] == '"' {
 		name = name[1 : len(name)-1]
@@ -43,9 +43,12 @@ func ReminderFromTgArgs(args string, userID int64) (*Reminder, error) {
 		deadlineDate = deadlineDate.AddDate(0, 0, days-1)
 	}
 
-	hours, minutes := 0, 0
+	hours, minutes := deadlineDate.Hour(), deadlineDate.Minute()
 	if len(parsed) > 2 {
-		hours, minutes, _ = helpers.ParseHoursAndMinutes(parsed[2])
+		h, m, err := helpers.ParseHoursAndMinutes(parsed[2])
+		if err != nil {
+			hours, minutes = h, m
+		}
 	}
 
 	deadlineDate = helpers.SetHoursAndMinutes(deadlineDate, hours, minutes)

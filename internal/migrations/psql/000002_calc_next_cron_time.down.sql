@@ -1,0 +1,1 @@
+drop function calc_next_cron_time(t timestamp, f frequency_type);

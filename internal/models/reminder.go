@@ -28,3 +28,44 @@ func (r *Reminder) ToString() string {
 		r.RemindFrequency,
 	)
 }
+
+func (r *Reminder) NotifyString() string {
+	return fmt.Sprintf(
+		"Name: %s\nDeadline: %s\nTime left: %s",
+		r.Name,
+		r.Deadline.Format("2006-01-02 15:04"),
+		r.timeLeft(),
+	)
+}
+
+func (r *Reminder) daysLeft() int {
+	return r.hoursLeft() / 24
+}
+
+func (r *Reminder) hoursLeft() int {
+	return int(time.Until(r.Deadline).Hours())
+}
+
+func (r *Reminder) minutesLeft() int {
+	return int(time.Until(r.Deadline).Minutes())
+}
+
+func (r *Reminder) timeLeft() string {
+	days, hours, minutes := r.daysLeft(), r.hoursLeft(), r.minutesLeft()
+	s, visited := "", 0
+	if days > 0 {
+		s += fmt.Sprintf("%d days ", days)
+		visited++
+	}
+
+	if hours > 0 {
+		s += fmt.Sprintf("%d hours ", hours)
+		visited++
+	}
+
+	if minutes > 0 && visited < 2 {
+		s += fmt.Sprintf("%d minutes ", minutes)
+	}
+
+	return s
+}
